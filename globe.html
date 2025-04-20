@@ -1,0 +1,2325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Глобальная карта | First Lady Yacht</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+               .luxury-assets {
+    padding: 80px 5%;
+    background-color: #111827;
+}
+
+.luxury-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.luxury-card {
+    background-color: #1f2937;
+    border-radius: 12px;
+    padding: 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.luxury-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
+
+.luxury-icon {
+    font-size: 48px;
+    color: #3b82f6;
+    margin-bottom: 24px;
+}
+
+.luxury-card h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.luxury-card p {
+    color: #d1d5db;
+    line-height: 1.6;
+    font-size: 16px;
+    margin-bottom: 24px;
+}
+
+.luxury-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.luxury-link svg {
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+}
+
+.luxury-link:hover svg {
+    transform: translateX(6px);
+}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: #0a0e17;
+            color: #ffffff;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        /* Desktop scrollbar styles */
+        @media (min-width: 577px) {
+            ::-webkit-scrollbar {
+                width: 12px;
+                background-color: #0a0e17;
+            }
+
+            ::-webkit-scrollbar-track {
+                border-radius: 3px;
+                background-color: transparent;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                border-radius: 5px;
+                background-color: #1d4ed8;
+                border: 2px solid #1d4ed8;
+            }
+        }
+
+        /* Hide scrollbar on mobile */
+        @media (max-width: 576px) {
+            html, body {
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE and Edge */
+            }
+
+            html::-webkit-scrollbar, body::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, and other WebKit browsers */
+            }
+        }
+
+        header {
+            padding: 16px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: background-color 0.5s ease;
+            background: linear-gradient(45deg, #1e293b, #0a0e17);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        header.scrolled {
+            background: linear-gradient(45deg, #1e293b, #0a0e17);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .logo span {
+            color: #3b82f6;
+        }
+        
+        .logo:hover {
+            color: #3b82f6;
+        }
+        
+        nav {
+            display: flex;
+            align-items: center;
+        }
+        
+        .cta-button-nav {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-width: 140px;
+            text-align: center;
+        }
+        
+        .cta-button-nav:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+            padding: 10px;
+        }
+        
+        .hamburger div {
+            width: 32px;
+            height: 4px;
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger.active div:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .hamburger.active div:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active div:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+        
+        nav.active {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 80%;
+            max-width: 300px;
+            background: #1e293b;
+            padding: 80px 20px;
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        
+        nav {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        @media (min-width: 769px) {
+            nav {
+                transform: none;
+                position: static;
+                height: auto;
+                width: auto;
+                background: none;
+                padding: 0;
+                box-shadow: none;
+            }
+            .hamburger {
+                display: none;
+            }
+        }
+        
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            position: auto;
+            overflow: hidden;
+            background: linear-gradient(45deg, #0a0e17, #1e293b);
+        }
+        
+        .hero-content {
+            max-width: 700px;
+            z-index: 10;
+        }
+        
+        .hero h1 {
+            font-size: 2px;
+            font-weight: 700px;
+            margin-bottom: 24px;
+            line-height: 1.2;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+            float: right;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 32px;
+            line-height: 1.6;
+            color: #d1d5db;
+        }
+        
+        .cta-button {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: #ffffff;
+            border: none;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 140px;
+            text-align: center;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+        .services {
+            padding: 80px 5%;
+            background-color: #111827;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .section-title p {
+            color: #d1d5db;
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .service-card {
+            background-color: #1f2937;
+            border-radius: 12px;
+            padding: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+        }
+        
+        .service-icon {
+            font-size: 48px;
+            color: #3b82f6;
+            margin-bottom: 24px;
+        }
+        
+        .service-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .service-card p {
+            color: #d1d5db;
+            line-height: 1.6;
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .service-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+        }
+        
+        .service-link svg {
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .service-link:hover svg {
+            transform: translateX(6px);
+        }
+        
+        .network {
+            padding: 80px 5%;
+            position: relative;
+            background-color: #0a0e17;
+        }
+        
+        .network-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+        
+        .network-card {
+            background-color: #1f2937;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .network-card:hover {
+            transform: translateY(-12px);
+        }
+        
+        .network-icon {
+            font-size: 40px;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+        
+        .network-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .network-card p {
+            color: #d1d5db;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .network-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            padding: 10px 0;
+            display: inline-block;
+        }
+        
+        .testimonials {
+            padding: 80px 5%;
+            background-color: #111827;
+        }
+        
+        .testimonial-slider {
+            margin-top: 48px;
+            position: relative;
+        }
+        
+        .testimonial {
+            background-color: #1f2937;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 0 12px;
+            display: none;
+        }
+        
+        .testimonial.active {
+            display: block;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            color: #d1d5db;
+            line-height: 1.6;
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #ffffff;
+        }
+        
+        .author-info h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+        
+        .author-info p {
+            font-size: 14px;
+            color: #d1d5db;
+        
+        }
+        
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+        }
+        
+        .dot {
+            width: 14px;
+            height: 14px;
+            background-color: #4b5563;
+            border-radius: 50%;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .dot.active {
+            background-color: #3b82f6;
+        }
+        
+        .cta {
+            padding: 80px 5%;
+            text-align: center;
+            background: linear-gradient(45deg, #0a0e17, #1e293b);
+        }
+        
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .cta h2 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        
+        .cta p {
+            color: #d1d5db;
+            font-size: 18px;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+        
+        .web3-form {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #1f2937;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .web3-form h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .web3-form input,
+        .web3-form textarea,
+        .web3-form select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: #374151;
+            color: #ffffff;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .web3-form select {
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+        
+        .web3-form textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+        
+        .web3-form button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .web3-form button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .web3-status {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #d1d5db;
+            text-align: center;
+        }
+        
+        footer {
+            background-color: #0a0e17;
+            padding: 60px 5% 40px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+        
+        .footer-column h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 48px;
+            height: 3px;
+            background-color: #3b82f6;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-column ul li a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+            display: block;
+            padding: 8px 0;
+        }
+        
+        .footer-column ul li a:hover {
+            color: #3b82f6;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 32px;
+            border-top: 1px solid #1f2937;
+            color: #d1d5db;
+            font-size: 14px;
+        }
+        .globe-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            position: relative;
+        }
+
+        #globe-container {
+            width: 1600px;
+            height: 1600px;
+            max-width: 95vw;
+            max-height: 95vw;
+            margin: 0 auto;
+            opacity: 1;
+        }
+
+        #tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: 'Open Sans', sans-serif;
+            pointer-events: none;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .globe-section {
+                padding: 30px;
+            }
+
+            #globe-container {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1/1;
+            }
+
+            #tooltip {
+                font-size: 12px;
+                padding: 3px 8px;
+            }
+        }
+        .hero {
+                text-align: center;
+                padding: 80px 5% 40px;
+            }
+            
+            .hero-content {
+                max-width: 100%;
+            }
+            
+            .hero h1 {
+                font-size: 28px;
+            }
+            
+            .hero p {
+                font-size: 14px;
+                margin-bottom: 24px;
+            }
+            
+            .cta-button {
+                padding: 12px 24px;
+                font-size: 14px;
+                min-width: 120px;
+            }
+            
+            .services-grid, .network-grid, .footer-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .service-card, .network-card {
+                padding: 20px;
+            }
+            
+            .section-title h2 {
+                font-size: 28px;
+            }
+            
+            .section-title p {
+                font-size: 16px;
+            }
+            
+            .web3-form input,
+            .web3-form textarea,
+            .web3-form select {
+                padding: 12px;
+                font-size: 14px;
+            }
+            
+            .web3-form button {
+                padding: 14px;
+                font-size: 14px;
+            }
+            
+            .footer-column h3 {
+                font-size: 18px;
+            }
+            
+            .footer-column ul li a {
+                font-size: 14px;
+            }
+            
+            .copyright {
+                font-size: 12px;
+            }
+        
+        .world-map {
+    padding: 80px 5%;
+    background-color: #0a0e17;
+}
+
+#map {
+    height: 600px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.top-banks {
+    padding: 80px 5%;
+    background-color: #111827;
+}
+
+.banks-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 24px;
+}
+
+.banks-table th, .banks-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #374151;
+}
+
+.banks-table th {
+    background-color: #1f2937;
+    font-weight: 600;
+}
+
+.banks-table tr:hover {
+    background-color: #1f2937;
+}
+@keyframes pulse {
+    0% { opacity: 0.9; }
+    50% { opacity: 0.5; }
+    100% { opacity: 0.9; }
+}
+
+
+/* Header/Nav Section */
+header {
+    padding: 16px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    transition: background-color 0.5s ease;
+    background: linear-gradient(45deg, #1e293b, #0a0e17);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+header.scrolled {
+    background: linear-gradient(45deg, #1e293b, #0a0e17);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.logo span {
+    color: #3b82f6;
+}
+
+.logo:hover {
+    color: #3b82f6;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+}
+
+.cta-button-nav {
+    background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-width: 140px;
+    text-align: center;
+    touch-action: manipulation; /* Improve touch responsiveness */
+}
+
+.cta-button-nav:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(59, 130, 246, 0.4);
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 6px;
+    padding: 12px; /* Larger touch area */
+    z-index: 1001;
+}
+
+.hamburger div {
+    width: 32px;
+    height: 4px;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.hamburger.active div:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger.active div:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active div:nth-child(3) {
+    transform: rotate(-45deg) translate(8px, -8px);
+}
+
+nav.active {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 80%;
+    max-width: 300px;
+    background: #1e293b;
+    padding: 80px 20px;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+nav {
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5%;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(45deg, #0a0e17, #1e293b);
+}
+
+.hero-content {
+    max-width: 45%;
+    z-index: 10;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Align content vertically */
+    overflow: hidden;
+}
+
+.hero h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    line-height: 1.3;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    word-wrap: break-word;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 32px;
+    line-height: 1.6;
+    color: #d1d5db;
+    word-wrap: break-word;
+}
+
+#globe-container {
+    width: 50%;
+    max-width: 600px;
+    max-height: 600px;
+    aspect-ratio: 1/1;
+    touch-action: none;
+    position: relative;
+    z-index: 5;
+}
+
+/* Testimonials Section */
+.testimonials {
+    padding: 80px 5%;
+    background-color: #111827;
+}
+
+.testimonial-slider {
+    margin-top: 48px;
+    position: relative;
+    touch-action: pan-y;
+}
+
+.testimonial {
+    background-color: #1f2937;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 0 12px;
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+.testimonial.active {
+    display: block;
+    opacity: 1;
+}
+
+.testimonial-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    cursor: pointer;
+}
+
+.testimonial-link:hover .read-more {
+    color: #3b82f6;
+}
+
+.testimonial-text {
+    font-style: italic;
+    color: #d1d5db;
+    line-height: 1.6;
+    font-size: 16px;
+    margin-bottom: 24px;
+}
+
+.read-more {
+    display: inline-block;
+    color: #93c5fd;
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 12px;
+    transition: color 0.3s ease;
+}
+
+.slider-dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.dot {
+    width: 14px;
+    height: 14px;
+    background-color: #4b5563;
+    border-radius: 50%;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dot.active {
+    background-color: #3b82f6;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    /* Nav */
+    .hamburger {
+        display: flex;
+    }
+
+    nav {
+        transform: translateX(100%);
+    }
+
+    nav.active {
+        transform: translateX(0);
+    }
+
+    .cta-button-nav {
+        padding: 10px 20px;
+        font-size: 14px;
+        min-width: 120px;
+    }
+
+    /* Hero */
+    .hero {
+        flex-direction: column;
+        justify-content: center;
+        padding: 80px 5% 40px;
+        text-align: center;
+        height: auto;
+    }
+
+    .hero-content {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .hero h1 {
+        font-size: 28px;
+        line-height: 1.4;
+        margin-bottom: 16px;
+    }
+
+    .hero p {
+        font-size: 16px;
+        margin-bottom: 24px;
+    }
+
+    #globe-container {
+        width: 100%;
+        max-width: 80vw;
+        max-height: 80vw;
+        margin-top: 20px;
+    }
+
+    /* Testimonials */
+    .testimonials {
+        padding: 40px 5%;
+    }
+
+    .testimonial {
+        padding: 16px;
+        margin: 0 8px;
+    }
+
+    .testimonial-text {
+        font-size: 14px;
+    }
+
+    .testimonial-author h4 {
+        font-size: 16px;
+    }
+
+    .testimonial-author p {
+        font-size: 12px;
+    }
+
+    .read-more {
+        font-size: 12px;
+    }
+
+    .slider-dots {
+        margin-top: 16px;
+    }
+
+    .dot {
+        width: 12px;
+        height: 12px;
+        margin: 0 8px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+<header id="header">
+    <a href="#" class="logo">GLOBAL<span>FINANCE</span></a>
+    <nav id="nav">
+        <div class="hamburger" id="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <a href="#contact" class="cta-button-nav">Связаться с нами</a>
+    </nav>
+</header>
+
+    
+ <!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Финансовая свобода для элиты</h1>
+        <p>Эксклюзивные решения: от анонимных счетов до глобальных переводов и юридических услуг с полной конфиденциальностью.</p>
+        <a href="#services" class="cta-button">Начать</a>
+    </div>
+    <canvas id="globe-container"></canvas>
+    <div id="tooltip"></div>
+</section>
+
+    <section class="services" id="services">
+        <div class="section-title">
+            <h2>Наши услуги</h2>
+            <p>Премиум-решения для клиентов, ценящих надежность, конфиденциальность и глобальный охват.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                </div>
+                <h3>Премиум-карты</h3>
+                <p>Элитные карты с неограниченными лимитами в 50+ странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+                <h3>Кредитные линии</h3>
+                <p>Онлайн-кредиты на крупные суммы в 40 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                        <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                        <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                    </svg>
+                </div>
+                <h3>Глобальные переводы</h3>
+                <p>Мгновенные переводы с низкими комиссиями в 40+ странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                </div>
+                <h3>Виртуальные SIM-карты</h3>
+                <p>Анонимные SIM-карты для связи в 50 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a10 10 0 0 0-9 6h18a10 10 0 0 0-9-6z"></path>
+                        <path d="M12 22a10 10 0 0 0 9-6H3a10 10 0 0 0 9 6z"></path>
+                        <path d="M2 12h20"></path>
+                    </svg>
+                </div>
+                <h3>Снятие наличных</h3>
+                <p>Конфиденциальное снятие наличных в США и 30 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </div>
+                <h3>Сделки с компаниями</h3>
+                <p>Покупка/продажа компаний в 40 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2 H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </div>
+                <h3>Услуги гражданства</h3>
+                <p>Получение гражданства в 35 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6L9 17l-5-5"></path>
+                    </svg>
+                </div>
+                <h3>Финансовые инструменты</h3>
+                <p>Ваучеры, векселя, банковские чеки в 40 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v.01"></path>
+                        <path d="M12 8a2 2 0 0 0-2 2v2a2 2 0 0 0 4 0v-2a2 2 0 0 0-2-2z"></path>
+                    </svg>
+                </div>
+                <h3>Анонимные счета</h3>
+                <p>Открытие анонимных счетов в 25 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </div>
+                <h3>Изготовление документов</h3>
+                <p>Конфиденциальное изготовление документов в 35 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v20"></path>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+                <h3>Юридические услуги</h3>
+                <p>Онлайн-консультации и контракты в 45 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 7h10v10H7z"></path>
+                        <path d="M7 17L17 7"></path>
+                    </svg>
+                </div>
+                <h3>Криптокошельки</h3>
+                <p>Продажа изъятых биткоин-кошельков в 12 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a10 10 0 0 0-9 6h18a10 10 0 0 0-9-6z"></path>
+                        <path d="M12 22a10 10 0 0 0 9-6H3a10 10 0 0 0 9 6z"></path>
+                    </svg>
+                </div>
+                <h3>Базы данных</h3>
+                <p>Продажа баз данных в 32 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <path d="M20 8v6M23 11h-6"></path>
+                    </svg>
+                </div>
+                <h3>Инвестиционные монеты</h3>
+                <p>Продажа инвестиционных монет в 35 странах.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"></path>
+                        <path d="M8 12h8"></path>
+                        <path d="M10 10l-2 2 2 2"></path>
+                        <path d="M14 10l2 2-2 2"></path>
+                    </svg>
+                </div>
+                <h3>Блокировка/разблокировка активов</h3>
+                <p>Услуги управления активами в банках 15 стран.</p>
+                <a href="#" class="service-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="luxury-assets" id="luxury-assets">
+        <div class="section-title">
+            <h2>Роскошные активы</h2>
+            <p>Эксклюзивные предложения для приобретения самолетов, вертолетов, яхт, островов и спортивных автомобилей.</p>
+        </div>
+        <div class="luxury-grid">
+            <div class="luxury-card">
+                <div class="luxury-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                </div>
+                <h3>Самолеты</h3>
+                <p>Приобретение частных самолетов в 20 странах.</p>
+                <a href="#" class="luxury-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="luxury-card">
+                <div class="luxury-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+                    </svg>
+                </div>
+                <h3>Вертолеты</h3>
+                <p>Элитные вертолеты для бизнеса и отдыха в 15 странах.</p>
+                <a href="#" class="luxury-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="luxury-card">
+                <div class="luxury-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 17l2-2v-3l2-2h10l2 2v3l2 2"></path>
+                        <path d="M7 17h10"></path>
+                    </svg>
+                </div>
+                <h3>Яхты</h3>
+                <p>Роскошные яхты для путешествий в 25 странах.</p>
+                <a href="#" class="luxury-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="luxury-card">
+                <div class="luxury-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2c-4 0-7 2-7 6s3 6 7 6 7-2 7-6-3-6-7-6z"></path>
+                        <path d="M5 8h14"></path>
+                    </svg>
+                </div>
+                <h3>Острова</h3>
+                <p>Эксклюзивные острова для покупки в 10 странах.</p>
+                <a href="#" class="luxury-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="luxury-card">
+                <div class="luxury-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 18h2M20 18h2M3 22h18M6 14l2-2h8l2 2M8 6h8"></path>
+                    </svg>
+                </div>
+                <h3>Спортивные авто</h3>
+                <p>Премиум спортивные автомобили в 30 странах.</p>
+                <a href="#" class="luxury-link">
+                    Узнать больше
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="top-banks" id="top-banks">
+        <div class="section-title">
+            <h2>Топ 100 банков</h2>
+            <p>Список крупнейших банков мира по объему активов (пример 20 банков, полный список доступен в источниках).</p>
+        </div>
+        <table class="banks-table">
+            <thead>
+                <tr>
+                    <th>Место</th>
+                    <th>Банк</th>
+                    <th>Страна</th>
+                    <th>Активы (трлн $)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>Industrial & Commercial Bank of China</td><td>Китай</td><td>6.30</td></tr>
+                <tr><td>2</td><td>China Construction Bank</td><td>Китай</td><td>5.40</td></tr>
+                <tr><td>3</td><td>Agricultural Bank of China</td><td>Китай</td><td>5.30</td></tr>
+                <tr><td>4</td><td>Bank of China</td><td>Китай</td><td>4.60</td></tr>
+                <tr><td>5</td><td>JPMorgan Chase</td><td>США</td><td>3.90</td></tr>
+                <tr><td>6</td><td>Bank of America</td><td>США</td><td>3.20</td></tr>
+                <tr><td>7</td><td>HSBC Holdings</td><td>Великобритания</td><td>2.99</td></tr>
+                <tr><td>8</td><td>Mitsubishi UFJ Financial</td><td>Япония</td><td>2.80</td></tr>
+                <tr><td>9</td><td>BNP Paribas</td><td>Франция</td><td>2.70</td></tr>
+                <tr><td>10</td><td>Citigroup</td><td>США</td><td>2.45</td></tr>
+                <tr><td>11</td><td>Wells Fargo</td><td>США</td><td>1.95</td></tr>
+                <tr><td>12</td><td>Postal Savings Bank of China</td><td>Китай</td><td>1.90</td></tr>
+                <tr><td>13</td><td>Santander</td><td>Испания</td><td>1.80</td></tr>
+                <tr><td>14</td><td>Goldman Sachs</td><td>США</td><td>1.60</td></tr>
+                <tr><td>15</td><td>China Merchants Bank</td><td>Китай</td><td>1.50</td></tr>
+                <tr><td>15</td><td>Deutsche Bank</td><td>Германия</td><td>1.50</td></tr>
+                <tr><td>15</td><td>Toronto-Dominion Bank</td><td>Канада</td><td>1.50</td></tr>
+                <tr><td>18</td><td>Industrial Bank (China)</td><td>Китай</td><td>1.43</td></tr>
+                <tr><td>18</td><td>Industrial Bank (China)</td><td>Китай</td><td>1.43</td></tr>
+                <tr><td>20</td><td>Toronto-Dominion Bank</td><td>Канада</td><td>1.42</td></tr>
+                <tr><td>21</td><td>Royal Bank of Canada</td><td>Канада</td><td>1.40</td></tr>
+                <tr><td>22</td><td>China CITIC Bank</td><td>Китай</td><td>1.27</td></tr>
+                <tr><td>23</td><td>Crédit Mutuel</td><td>Франция</td><td>1.26</td></tr>
+                <tr><td>24</td><td>Morgan Stanley</td><td>США</td><td>1.20</td></tr>
+                <tr><td>24</td><td>Shanghai Pudong Development Bank</td><td>Китай</td><td>1.20</td></tr>
+                
+            </tbody>
+        </table>
+    </section>
+ 
+
+    <section class="network" id="network">
+        <div class="section-title">
+            <h2>Глобальная сеть</h2>
+            <p>Мы доступны на ведущих мировых платформах для мгновенной и безопасной связи.</p>
+        </div>
+        <div class="network-grid">
+            <div class="network-card">
+                <div class="network-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                </div>
+                <h3>Telegram</h3>
+                <p>Безопасные консультации 24/7.</p>
+                <a href="https://t.me/globalfinance" class="network-link">Присоединиться</a>
+            </div>
+            <div class="network-card">
+                <div class="network-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                </div>
+                <h3>Signal</h3>
+                <p>Шифрованная связь для конфиденциальности.</p>
+                <a href="https://signal.group/globalfinance" class="network-link">Подключиться</a>
+            </div>
+            <div class="network-card">
+                <div class="network-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                </div>
+                <h3>Instagram</h3>
+                <p>Новости и эксклюзивные предложения.</p>
+                <a href="https://instagram.com/globalfinance" class="network-link">Подписаться</a>
+            </div>
+            <div class="network-card">
+                <div class="network-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                    </svg>
+                </div>
+                <h3>Twitter</h3>
+                <p>Обновления в реальном времени.</p>
+                <a href="https://twitter.com/globalfinance" class="network-link">Подписаться</a>
+            </div>
+        </div>
+    </section>
+
+   <!-- Testimonials Section -->
+<section class="testimonials" id="testimonials">
+    <div class="section-title">
+        <h2>Отзывы клиентов</h2>
+        <p>Истории успеха тех, кто доверил нам свои цели.</p>
+    </div>
+    <div class="testimonial-slider">
+        <div class="testimonial active">
+            <a href="#full-testimonial-1" class="testimonial-link">
+                <p class="testimonial-text">"Анонимные счета и премиум-карты — настоящая финансовая свобода."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">АМ</div>
+                    <div class="author-info">
+                        <h4>Алексей М.</h4>
+                        <p>Предприниматель, Нью-Йорк</p>
+                    </div>
+                </div>
+                <span class="read-more">Читать больше</span>
+            </a>
+        </div>
+        <div class="testimonial">
+            <a href="#full-testimonial-2" class="testimonial-link">
+                <p class="testimonial-text">"Кредиты и юридические услуги на высшем уровне."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">ЕК</div>
+                    <div class="author-info">
+                        <h4>Елена К.</h4>
+                        <p>Владелец бизнеса, Дубай</p>
+                    </div>
+                </div>
+                <span class="read-more">Читать больше</span>
+            </a>
+        </div>
+        <div class="testimonial">
+            <a href="#full-testimonial-3" class="testimonial-link">
+                <p class="testimonial-text">"Глобальные переводы — быстро и безопасно."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">ВН</div>
+                    <div class="author-info">
+                        <h4>Виктор Н.</h4>
+                        <p>Инвестор, Лондон</p>
+                    </div>
+                </div>
+                <span class="read-more">Читать больше</span>
+            </a>
+        </div>
+        <div class="slider-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+</section>
+
+    <section class="cta" id="contact">
+        <div class="cta-content">
+            <h2>Станьте нашим партнером</h2>
+            <p>Свяжитесь с нами через защищенную форму для конфиденциального сотрудничества.</p>
+            <div class="web3-form">
+                <h3>Связаться с нами</h3>
+                <form action="https://api.web3forms.com/submit" method="POST">
+                    <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+                    <input type="text" name="name" placeholder="Имя" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <select name="service" required>
+                        <option value="" disabled selected>Интересующая услуга</option>
+                        <option value="Премиум-карты">Премиум-карты</option>
+                        <option value="Кредитные линии">Кредитные линии</option>
+                        <option value="Глобальные переводы">Глобальные переводы</option>
+                        <option value="Виртуальные SIM-карты">Виртуальные SIM-карты</option>
+                        <option value="Снятие наличных">Снятие наличных</option>
+                        <option value="Сделки с компаниями">Сделки с компаниями</option>
+                        <option value="Услуги гражданства">Услуги гражданства</option>
+                        <option value="Финансовые инструменты">Финансовые инструменты</option>
+                        <option value="Анонимные счета">Анонимные счета</option>
+                        <option value="Изготовление документов">Изготовление документов</option>
+                        <option value="Юридические услуги">Юридические услуги</option>
+                        <option value="Криптокошельки">Криптокошельки</option>
+                        <option value="Базы данных">Базы данных</option>
+                        <option value="Инвестиционные монеты">Инвестиционные монеты</option>
+                        <option value="Блокировка/разблокировка активов">Блокировка/разблокировка активов</option>
+                    </select>
+                    <textarea name="message" placeholder="Сообщение" required></textarea>
+                    <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+                    <button type="submit">Отправить</button>
+                </form>
+                <p class="web3-status" id="form-status">Используйте форму для безопасной связи.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h3>О нас</h3>
+                <ul>
+                    <li><a href="#">Миссия</a></li>
+                    <li><a href="#">Команда</a></li>
+                    <li><a href="#">Безопасность</a></li>
+                    <li><a href="#">Партнерства</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Услуги</h3>
+                <ul>
+                    <li><a href="#">Карты</a></li>
+                    <li><a href="#">Кредиты</a></li>
+                    <li><a href="#">Переводы</a></li>
+                    <li><a href="#">Юридические</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Поддержка</h3>
+                <ul>
+                    <li><a href="#">Часто задаваемые вопросы</a></li>
+                    <li><a href="#">Контакты</a></li>
+                    <li><a href="#">Конфиденциальность</a></li>
+                    <li><a href="#">Юридическая информация</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Социальные сети</h3>
+                <ul>
+                    <li><a href="https://t.me/globalfinance">Telegram</a></li>
+                    <li><a href="https://signal.group/globalfinance">Signal</a></li>
+                    <li><a href="https://instagram.com/globalfinance">Instagram</a></li>
+                    <li><a href="https://twitter.com/globalfinance">Twitter</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2025 GLOBALFINANCE. Все права защищены. Формы отправляются через Web3Forms для максимальной безопасности.</p>
+        </div>
+    </footer>
+
+    <script>
+    // Header scroll effect
+window.addEventListener('scroll', () => {
+    const header = document.getElementById('header');
+    if (header) {
+        header.classList.toggle('scrolled', window.scrollY > 50);
+    } else {
+        console.error('Header element not found');
+    }
+});
+
+ // Hamburger menu toggle
+const hamburger = document.getElementById('hamburger');
+const nav = document.getElementById('nav');
+if (hamburger && nav) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        nav.classList.toggle('active');
+    });
+
+    nav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            nav.classList.remove('active');
+        });
+    });
+
+    // Close nav on outside click
+    document.addEventListener('click', (e) => {
+        if (!nav.contains(e.target) && !hamburger.contains(e.target) && nav.classList.contains('active')) {
+            hamburger.classList.remove('active');
+            nav.classList.remove('active');
+        }
+    });
+} else {
+    console.error('Hamburger or nav element not found');
+}
+
+        // Smooth scrolling for anchor links
+        const anchors = document.querySelectorAll('a[href^="#"]');
+        if (anchors.length > 0) {
+            anchors.forEach(anchor => {
+                anchor.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = anchor.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const header = document.getElementById('header');
+                        const headerHeight = header ? header.offsetHeight : 0;
+                        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+                        try {
+                            window.scrollTo({
+                                top: targetPosition,
+                                behavior: 'smooth'
+                            });
+                        } catch (err) {
+                            console.error('Smooth scroll failed:', err);
+                            window.scrollTo(0, targetPosition); // Fallback
+                        }
+                    } else {
+                        console.warn(`Target element #${targetId} not found`);
+                    }
+                });
+            });
+        } else {
+            console.warn('No anchor links found for smooth scrolling');
+        }
+        // Check for Three.js
+        if (typeof THREE === 'undefined') {
+            console.error('Three.js not loaded.');
+            throw new Error('Three.js required');
+        }
+
+        // Check for canvas
+        const canvas = document.getElementById('globe-container');
+        if (!canvas) {
+            console.error('Canvas with id="globe-container" not found.');
+            throw new Error('Canvas required');
+        }
+
+        // Initialize Three.js
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(1600, 1600, false);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        console.log('Renderer initialized');
+
+        // Texture loader with fallback
+        const textureLoader = new THREE.TextureLoader();
+        const loadTexture = (url, fallbackColor) => {
+            try {
+                return textureLoader.load(url, undefined, undefined, (err) => {
+                    console.warn(`Failed to load texture ${url}:`, err);
+                    return new THREE.Texture();
+                });
+            } catch (err) {
+                console.error(`Error loading texture ${url}:`, err);
+                return new THREE.Texture();
+            }
+        };
+
+        // Create Earth
+        const globeRadius = 7;
+        const earthGeometry = new THREE.SphereGeometry(globeRadius, 64, 64);
+        const earthMap = loadTexture('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg', 0x888888);
+        const earthMaterial = new THREE.MeshPhongMaterial({ map: earthMap, shininess: 40 });
+        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        scene.add(earth);
+        console.log('Earth added');
+
+        // Clouds
+        const cloudGeometry = new THREE.SphereGeometry(globeRadius * 1.01, 64, 64);
+        const cloudMap = loadTexture('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_clouds_2048.jpg', 0x888888);
+        const cloudMaterial = new THREE.MeshPhongMaterial({
+            map: cloudMap,
+            transparent: true,
+            opacity: 0.5,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending
+        });
+        const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        scene.add(clouds);
+
+        // Atmosphere
+        const atmosphereGeometry = new THREE.SphereGeometry(globeRadius * 1.06, 64, 64);
+        const atmosphereMaterial = new THREE.MeshPhongMaterial({
+            color: 0x3b82f6,
+            shininess: 20,
+            opacity: 0.35,
+            transparent: true,
+            side: THREE.BackSide
+        });
+        const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+        scene.add(atmosphere);
+
+        // Stars
+        const starGeometry = new THREE.SphereGeometry(60, 64, 64);
+        const starMap = loadTexture('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/stars/starmap_4k.jpg', 0x000000);
+        const starMaterial = new THREE.MeshBasicMaterial({ map: starMap, side: THREE.BackSide });
+        const stars = new THREE.Mesh(starGeometry, starMaterial);
+        scene.add(stars);
+
+        // Labels (51 countries + 50 U.S. states)
+        const labels = [
+            // Countries
+            { name: "Washington, D.C.", country: "United States", lat: 38.9072, lng: -77.0369, countryLat: 39.8283, countryLng: -98.5795, isEU: false, isState: false },
+            { name: "Ottawa", country: "Canada", lat: 45.4215, lng: -75.6972, countryLat: 56.1304, countryLng: -106.3468, isEU: false, isState: false },
+            { name: "Mexico City", country: "Mexico", lat: 19.4326, lng: -99.1332, countryLat: 23.6345, countryLng: -102.5528, isEU: false, isState: false },
+            { name: "London", country: "United Kingdom", lat: 51.5074, lng: -0.1278, countryLat: 54.5260, countryLng: -2.2550, isEU: false, isState: false },
+            { name: "Paris", country: "France", lat: 48.8566, lng: 2.3522, countryLat: 46.2276, countryLng: 2.2137, isEU: true, isState: false },
+            { name: "Berlin", country: "Germany", lat: 52.5200, lng: 13.4050, countryLat: 51.1657, countryLng: 10.4515, isEU: true, isState: false },
+            { name: "Rome", country: "Italy", lat: 41.9028, lng: 12.4964, countryLat: 41.8719, countryLng: 12.5674, isEU: true, isState: false },
+            { name: "Madrid", country: "Spain", lat: 40.4168, lng: -3.7038, countryLat: 40.4637, countryLng: -3.7492, isEU: true, isState: false },
+            { name: "Amsterdam", country: "Netherlands", lat: 52.3676, lng: 4.9041, countryLat: 52.1326, countryLng: 5.2913, isEU: true, isState: false },
+            { name: "Brussels", country: "Belgium", lat: 50.8503, lng: 4.3517, countryLat: 50.5039, countryLng: 4.4699, isEU: true, isState: false },
+            { name: "Vienna", country: "Austria", lat: 48.2082, lng: 16.3738, countryLat: 47.5162, countryLng: 14.5501, isEU: true, isState: false },
+            { name: "Warsaw", country: "Poland", lat: 52.2297, lng: 21.0122, countryLat: 51.9194, countryLng: 19.1451, isEU: true, isState: false },
+            { name: "Budapest", country: "Hungary", lat: 47.4979, lng: 19.0402, countryLat: 47.1625, countryLng: 19.5033, isEU: true, isState: false },
+            { name: "Prague", country: "Czech Republic", lat: 50.0755, lng: 14.4378, countryLat: 49.8175, countryLng: 15.4730, isEU: true, isState: false },
+            { name: "Copenhagen", country: "Denmark", lat: 55.6761, lng: 12.5683, countryLat: 56.2639, countryLng: 9.5018, isEU: true, isState: false },
+            { name: "Stockholm", country: "Sweden", lat: 59.3293, lng: 18.0686, countryLat: 64.5821, countryLng: 16.1587, isEU: true, isState: false },
+            { name: "Helsinki", country: "Finland", lat: 60.1699, lng: 24.9384, countryLat: 61.9241, countryLng: 25.7482, isEU: true, isState: false },
+            { name: "Dublin", country: "Ireland", lat: 53.3498, lng: -6.2603, countryLat: 53.1424, countryLng: -7.6921, isEU: true, isState: false },
+            { name: "Lisbon", country: "Portugal", lat: 38.7223, lng: -9.1393, countryLat: 39.3999, countryLng: -8.2245, isEU: true, isState: false },
+            { name: "Athens", country: "Greece", lat: 37.9838, lng: 23.7275, countryLat: 39.0742, countryLng: 21.8243, isEU: true, isState: false },
+            { name: "Sofia", country: "Bulgaria", lat: 42.6977, lng: 23.3219, countryLat: 42.7339, countryLng: 25.4858, isEU: true, isState: false },
+            { name: "Bucharest", country: "Romania", lat: 44.4268, lng: 26.1025, countryLat: 45.9432, countryLng: 24.9668, isEU: true, isState: false },
+            { name: "Zagreb", country: "Croatia", lat: 45.8150, lng: 15.9819, countryLat: 45.1, countryLng: 15.2, isEU: true, isState: false },
+            { name: "Riga", country: "Latvia", lat: 56.9496, lng: 24.1052, countryLat: 56.8796, countryLng: 24.6032, isEU: true, isState: false },
+            { name: "Vilnius", country: "Lithuania", lat: 54.6872, lng: 25.2797, countryLat: 55.1694, countryLng: 23.8813, isEU: true, isState: false },
+            { name: "Tallinn", country: "Estonia", lat: 59.4370, lng: 24.7536, countryLat: 58.5953, countryLng: 25.0136, isEU: true, isState: false },
+            { name: "Bratislava", country: "Slovakia", lat: 48.1486, lng: 17.1077, countryLat: 48.6690, countryLng: 19.6990, isEU: true, isState: false },
+            { name: "Ljubljana", country: "Slovenia", lat: 46.0569, lng: 14.5058, countryLat: 46.1512, countryLng: 14.9955, isEU: true, isState: false },
+            { name: "Nicosia", country: "Cyprus", lat: 35.1856, lng: 33.3823, countryLat: 35.1264, countryLng: 33.4299, isEU: true, isState: false },
+            { name: "Valletta", country: "Malta", lat: 35.8989, lng: 14.5146, countryLat: 35.9375, countryLng: 14.3754, isEU: true, isState: false },
+            { name: "Moscow", country: "Russia", lat: 55.7558, lng: 37.6173, countryLat: 61.5240, countryLng: 105.3188, isEU: false, isState: false },
+            { name: "Beijing", country: "China", lat: 39.9042, lng: 116.4074, countryLat: 35.8617, countryLng: 104.1954, isEU: false, isState: false },
+            { name: "Tokyo", country: "Japan", lat: 35.6762, lng: 139.6503, countryLat: 36.2048, countryLng: 138.2529, isEU: false, isState: false },
+            { name: "New Delhi", country: "India", lat: 28.6139, lng: 77.2090, countryLat: 20.5937, countryLng: 78.9629, isEU: false, isState: false },
+            { name: "Seoul", country: "South Korea", lat: 37.5665, lng: 126.9780, countryLat: 35.9078, countryLng: 127.7669, isEU: false, isState: false },
+            { name: "Canberra", country: "Australia", lat: -35.2809, lng: 149.1300, countryLat: -25.2744, countryLng: 133.7751, isEU: false, isState: false },
+            { name: "Brasilia", country: "Brazil", lat: -15.8267, lng: -47.9218, countryLat: -14.2350, countryLng: -51.9253, isEU: false, isState: false },
+            { name: "Buenos Aires", country: "Argentina", lat: -34.6037, lng: -58.3816, countryLat: -38.4161, countryLng: -63.6167, isEU: false, isState: false },
+            { name: "Pretoria", country: "South Africa", lat: -25.7479, lng: 28.2293, countryLat: -30.5595, countryLng: 22.9375, isEU: false, isState: false },
+            { name: "Riyadh", country: "Saudi Arabia", lat: 24.7136, lng: 46.6753, countryLat: 23.8859, countryLng: 45.0792, isEU: false, isState: false },
+            { name: "Ankara", country: "Turkey", lat: 39.9334, lng: 32.8597, countryLat: 38.9637, countryLng: 35.2433, isEU: false, isState: false },
+            { name: "Cairo", country: "Egypt", lat: 30.0444, lng: 31.2357, countryLat: 26.8206, countryLng: 30.8025, isEU: false, isState: false },
+            { name: "Jakarta", country: "Indonesia", lat: -6.2088, lng: 106.8456, countryLat: -0.7893, countryLng: 113.9213, isEU: false, isState: false },
+            { name: "Bangkok", country: "Thailand", lat: 13.7563, lng: 100.5018, countryLat: 15.8700, countryLng: 100.9925, isEU: false, isState: false },
+            { name: "Hanoi", country: "Vietnam", lat: 21.0278, lng: 105.8342, countryLat: 14.0583, countryLng: 108.2772, isEU: false, isState: false },
+            { name: "Islamabad", country: "Pakistan", lat: 33.6844, lng: 73.0479, countryLat: 30.3753, countryLng: 69.3451, isEU: false, isState: false },
+            { name: "Tehran", country: "Iran", lat: 35.6892, lng: 51.3890, countryLat: 32.4279, countryLng: 53.6880, isEU: false, isState: false },
+            { name: "Kyiv", country: "Ukraine", lat: 50.4501, lng: 30.5234, countryLat: 48.3794, countryLng: 31.1656, isEU: false, isState: false },
+            { name: "Abuja", country: "Nigeria", lat: 9.0765, lng: 7.3986, countryLat: 9.081999, countryLng: 8.6753, isEU: false, isState: false },
+            { name: "Santiago", country: "Chile", lat: -33.4489, lng: -70.6693, countryLat: -35.6751, countryLng: -71.5430, isEU: false, isState: false },
+            { name: "Jerusalem", country: "Israel", lat: 31.7683, lng: 35.2137, countryLat: 31.5, countryLng: 34.75, isEU: false, isState: false },
+            // U.S. States
+            { name: "Montgomery", country: "Alabama", lat: 32.3792, lng: -86.3077, countryLat: 32.3182, countryLng: -86.9023, isEU: false, isState: true },
+            { name: "Juneau", country: "Alaska", lat: 58.3019, lng: -134.4197, countryLat: 64.2008, countryLng: -149.4937, isEU: false, isState: true },
+            { name: "Phoenix", country: "Arizona", lat: 33.4484, lng: -112.0740, countryLat: 34.0489, countryLng: -111.0937, isEU: false, isState: true },
+            { name: "Little Rock", country: "Arkansas", lat: 34.7465, lng: -92.2896, countryLat: 34.5574, countryLng: -92.2863, isEU: false, isState: true },
+            { name: "Sacramento", country: "California", lat: 38.5816, lng: -121.4944, countryLat: 36.7783, countryLng: -119.4179, isEU: false, isState: true },
+            { name: "Denver", country: "Colorado", lat: 39.7392, lng: -104.9903, countryLat: 39.5501, countryLng: -105.7821, isEU: false, isState: true },
+            { name: "Hartford", country: "Connecticut", lat: 41.7637, lng: -72.6851, countryLat: 41.6032, countryLng: -73.0877, isEU: false, isState: true },
+            { name: "Dover", country: "Delaware", lat: 39.1582, lng: -75.5244, countryLat: 38.9108, countryLng: -75.5277, isEU: false, isState: true },
+            { name: "Tallahassee", country: "Florida", lat: 30.4383, lng: -84.2807, countryLat: 27.6648, countryLng: -81.5158, isEU: false, isState: true },
+            { name: "Atlanta", country: "Georgia", lat: 33.7490, lng: -84.3880, countryLat: 33.0406, countryLng: -83.6431, isEU: false, isState: true },
+            { name: "Honolulu", country: "Hawaii", lat: 21.3069, lng: -157.8583, countryLat: 19.8987, countryLng: -155.6659, isEU: false, isState: true },
+            { name: "Boise", country: "Idaho", lat: 43.6150, lng: -116.2023, countryLat: 44.0682, countryLng: -114.7420, isEU: false, isState: true },
+            { name: "Springfield", country: "Illinois", lat: 39.7817, lng: -89.6501, countryLat: 40.6331, countryLng: -89.3985, isEU: false, isState: true },
+            { name: "Indianapolis", country: "Indiana", lat: 39.7684, lng: -86.1581, countryLat: 40.2672, countryLng: -86.1349, isEU: false, isState: true },
+            { name: "Des Moines", country: "Iowa", lat: 41.5868, lng: -93.6250, countryLat: 41.8780, countryLng: -93.0977, isEU: false, isState: true },
+            { name: "Topeka", country: "Kansas", lat: 39.0483, lng: -95.6780, countryLat: 38.4980, countryLng: -96.5853, isEU: false, isState: true },
+            { name: "Frankfort", country: "Kentucky", lat: 38.2009, lng: -84.8733, countryLat: 37.8223, countryLng: -84.9011, isEU: false, isState: true },
+            { name: "Baton Rouge", country: "Louisiana", lat: 30.4515, lng: -91.1871, countryLat: 30.9843, countryLng: -91.4299, isEU: false, isState: true },
+            { name: "Augusta", country: "Maine", lat: 44.3106, lng: -69.7795, countryLat: 45.2538, countryLng: -69.4455, isEU: false, isState: true },
+            { name: "Annapolis", country: "Maryland", lat: 38.9784, lng: -76.4922, countryLat: 39.0458, countryLng: -76.6413, isEU: false, isState: true },
+            { name: "Boston", country: "Massachusetts", lat: 42.3601, lng: -71.0589, countryLat: 42.4072, countryLng: -71.3824, isEU: false, isState: true },
+            { name: "Lansing", country: "Michigan", lat: 42.7325, lng: -84.5555, countryLat: 44.3148, countryLng: -85.6024, isEU: false, isState: true },
+            { name: "St. Paul", country: "Minnesota", lat: 44.9537, lng: -93.0900, countryLat: 46.7296, countryLng: -94.6859, isEU: false, isState: true },
+            { name: "Jackson", country: "Mississippi", lat: 32.2988, lng: -90.1848, countryLat: 32.3547, countryLng: -89.3985, isEU: false, isState: true },
+            { name: "Jefferson City", country: "Missouri", lat: 38.5767, lng: -92.1735, countryLat: 38.3104, countryLng: -92.5618, isEU: false, isState: true },
+            { name: "Helena", country: "Montana", lat: 46.5891, lng: -112.0391, countryLat: 46.9653, countryLng: -110.1135, isEU: false, isState: true },
+            { name: "Lincoln", country: "Nebraska", lat: 40.8136, lng: -96.7026, countryLat: 41.4925, countryLng: -99.9018, isEU: false, isState: true },
+            { name: "Carson City", country: "Nevada", lat: 39.1638, lng: -119.7674, countryLat: 38.8026, countryLng: -116.4194, isEU: false, isState: true },
+            { name: "Concord", country: "New Hampshire", lat: 43.2081, lng: -71.5376, countryLat: 43.1939, countryLng: -71.5724, isEU: false, isState: true },
+            { name: "Trenton", country: "New Jersey", lat: 40.2170, lng: -74.7429, countryLat: 40.0583, countryLng: -74.4057, isEU: false, isState: true },
+            { name: "Santa Fe", country: "New Mexico", lat: 35.6870, lng: -105.9378, countryLat: 34.9727, countryLng: -105.0324, isEU: false, isState: true },
+            { name: "Albany", country: "New York", lat: 42.6526, lng: -73.7562, countryLat: 42.7339, countryLng: -75.4376, isEU: false, isState: true },
+            { name: "Raleigh", country: "North Carolina", lat: 35.7796, lng: -78.6382, countryLat: 35.6301, countryLng: -79.8064, isEU: false, isState: true },
+            { name: "Bismarck", country: "North Dakota", lat: 46.8083, lng: -100.7837, countryLat: 47.5515, countryLng: -101.0020, isEU: false, isState: true },
+            { name: "Columbus", country: "Ohio", lat: 39.9612, lng: -82.9988, countryLat: 40.4173, countryLng: -82.9071, isEU: false, isState: true },
+            { name: "Oklahoma City", country: "Oklahoma", lat: 35.4676, lng: -97.5164, countryLat: 35.0078, countryLng: -97.0929, isEU: false, isState: true },
+            { name: "Salem", country: "Oregon", lat: 44.9429, lng: -123.0351, countryLat: 44.5720, countryLng: -122.0709, isEU: false, isState: true },
+            { name: "Harrisburg", country: "Pennsylvania", lat: 40.2732, lng: -76.8867, countryLat: 41.2033, countryLng: -77.1945, isEU: false, isState: true },
+            { name: "Providence", country: "Rhode Island", lat: 41.8240, lng: -71.4128, countryLat: 41.5801, countryLng: -71.4774, isEU: false, isState: true },
+            { name: "Columbia", country: "South Carolina", lat: 34.0007, lng: -81.0348, countryLat: 33.8361, countryLng: -81.1637, isEU: false, isState: true },
+            { name: "Pierre", country: "South Dakota", lat: 44.3683, lng: -100.3510, countryLat: 44.2998, countryLng: -99.4638, isEU: false, isState: true },
+            { name: "Nashville", country: "Tennessee", lat: 36.1627, lng: -86.7816, countryLat: 35.7478, countryLng: -86.6923, isEU: false, isState: true },
+            { name: "Austin", country: "Texas", lat: 30.2672, lng: -97.7431, countryLat: 31.9686, countryLng: -99.9018, isEU: false, isState: true },
+            { name: "Salt Lake City", country: "Utah", lat: 40.7608, lng: -111.8910, countryLat: 39.3200, countryLng: -111.0937, isEU: false, isState: true },
+            { name: "Montpelier", country: "Vermont", lat: 44.2601, lng: -72.5754, countryLat: 44.5588, countryLng: -72.5778, isEU: false, isState: true },
+            { name: "Richmond", country: "Virginia", lat: 37.5407, lng: -77.4360, countryLat: 37.7693, countryLng: -78.1700, isEU: false, isState: true },
+            { name: "Olympia", country: "Washington", lat: 47.0379, lng: -122.9007, countryLat: 47.7511, countryLng: -120.7401, isEU: false, isState: true },
+            { name: "Charleston", country: "West Virginia", lat: 38.3498, lng: -81.6326, countryLat: 38.5976, countryLng: -80.4549, isEU: false, isState: true },
+            { name: "Madison", country: "Wisconsin", lat: 43.0731, lng: -89.4012, countryLat: 44.6688, countryLng: -89.6385, isEU: false, isState: true },
+            { name: "Cheyenne", country: "Wyoming", lat: 41.1400, lng: -104.8202, countryLat: 42.7560, countryLng: -107.2903, isEU: false, isState: true }
+        ];
+
+        // Convert lat/lng to 3D position
+        const latLngToSphere = (lat, lng, radius) => {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lng + 180) * (Math.PI / 180);
+            const x = -(radius * Math.sin(phi) * Math.cos(theta));
+            const z = (radius * Math.sin(phi) * Math.sin(theta));
+            const y = (radius * Math.cos(phi));
+            return { x, y, z };
+        };
+
+        // Add labels (separate sprites for country/state, capital only for non-small countries)
+        const labelsGroup = new THREE.Group();
+        labels.forEach(item => {
+            // Check if the country is small (only for countries, not states)
+            let isSmallCountry = false;
+            if (!item.isState) {
+                const distance = Math.sqrt(
+                    Math.pow(item.lat - item.countryLat, 2) + Math.pow(item.lng - item.countryLng, 2)
+                );
+                isSmallCountry = distance < 1 || item.country === "Israel" || item.country === "Nigeria";
+            }
+
+            // Country/State label (white, 60px, at countryLat, countryLng)
+            const mainPosition = latLngToSphere(item.countryLat, item.countryLng, globeRadius + 0.15);
+            const mainCanvas = document.createElement('canvas');
+            mainCanvas.width = 512;
+            mainCanvas.height = 128;
+            const mainContext = mainCanvas.getContext('2d');
+            mainContext.font = 'Bold 60px "Roboto Condensed", Arial, sans-serif';
+            mainContext.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            mainContext.textAlign = 'center';
+            mainContext.fillText(item.country, mainCanvas.width / 2, mainCanvas.height * 0.7);
+            const mainTexture = new THREE.CanvasTexture(mainCanvas);
+            const mainSpriteMaterial = new THREE.SpriteMaterial({ map: mainTexture, transparent: true });
+            const mainSprite = new THREE.Sprite(mainSpriteMaterial);
+            mainSprite.position.set(mainPosition.x, mainPosition.y, mainPosition.z);
+            mainSprite.scale.set(1.0, 0.25, 1);
+            mainSprite.userData = { name: item.name, country: item.country, isState: item.isState };
+            labelsGroup.add(mainSprite);
+
+            // Capital label (yellow, 50px, at lat, lng) - only for non-small countries (not states)
+            if (!isSmallCountry && !item.isState) {
+                const capitalPosition = latLngToSphere(item.lat, item.lng, globeRadius + 0.15);
+                const capitalCanvas = document.createElement('canvas');
+                capitalCanvas.width = 512;
+                capitalCanvas.height = 128;
+                const capitalContext = capitalCanvas.getContext('2d');
+                capitalContext.font = 'Bold 50px "Roboto Condensed", Arial, sans-serif';
+                capitalContext.fillStyle = 'rgba(255, 255, 0, 0.9)';
+                capitalContext.textAlign = 'center';
+                capitalContext.fillText(item.name, capitalCanvas.width / 2, capitalCanvas.height * 0.7);
+                const capitalTexture = new THREE.CanvasTexture(capitalCanvas);
+                const capitalSpriteMaterial = new THREE.SpriteMaterial({ map: capitalTexture, transparent: true });
+                const capitalSprite = new THREE.Sprite(capitalSpriteMaterial);
+                capitalSprite.position.set(capitalPosition.x, capitalPosition.y, capitalPosition.z);
+                capitalSprite.scale.set(1.0, 0.25, 1);
+                capitalSprite.userData = { name: item.name, country: item.country, isState: item.isState };
+                labelsGroup.add(capitalSprite);
+            }
+        });
+        scene.add(labelsGroup);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.7);
+        scene.add(ambientLight);
+        const sunLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        sunLight.position.set(20, 10, 20);
+        scene.add(sunLight);
+
+        // Camera
+        camera.position.z = 14;
+
+        // Drag controls (X and Y axes, with Y constrained)
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let rotationSpeed = 0.0005;
+        let rotationVelocityX = 0;
+        let rotationVelocityY = 0;
+        const rotationDamping = 0.95;
+        const maxPolarAngle = Math.PI / 2;
+
+        canvas.addEventListener('mousedown', (event) => {
+            isDragging = true;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+            console.log('Drag started');
+        });
+
+        canvas.addEventListener('mousemove', (event) => {
+            if (isDragging) {
+                const deltaX = event.clientX - previousMousePosition.x;
+                const deltaY = event.clientY - previousMousePosition.y;
+                rotationVelocityY = deltaX * 0.005;
+                rotationVelocityX = deltaY * 0.005;
+
+                earth.rotation.y += rotationVelocityY;
+                clouds.rotation.y += rotationVelocityY;
+                labelsGroup.rotation.y += rotationVelocityY;
+                atmosphere.rotation.y += rotationVelocityY;
+
+                earth.rotation.x += rotationVelocityX;
+                clouds.rotation.x += rotationVelocityX;
+                labelsGroup.rotation.x += rotationVelocityX;
+                atmosphere.rotation.x += rotationVelocityX;
+
+                earth.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, earth.rotation.x));
+                clouds.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, clouds.rotation.x));
+                labelsGroup.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, labelsGroup.rotation.x));
+                atmosphere.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, atmosphere.rotation.x));
+
+                previousMousePosition = { x: event.clientX, y: event.clientY };
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+            console.log('Drag ended');
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+            console.log('Mouse left canvas');
+        });
+
+        canvas.addEventListener('touchstart', (event) => {
+            if (event.touches.length === 1) {
+                isDragging = true;
+                previousMousePosition = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+                console.log('Touch drag started');
+            }
+        });
+
+        canvas.addEventListener('touchmove', (event) => {
+            event.preventDefault();
+            if (isDragging && event.touches.length === 1) {
+                const deltaX = event.touches[0].clientX - previousMousePosition.x;
+                const deltaY = event.touches[0].clientY - previousMousePosition.y;
+                rotationVelocityY = deltaX * 0.005;
+                rotationVelocityX = deltaY * 0.005;
+
+                earth.rotation.y += rotationVelocityY;
+                clouds.rotation.y += rotationVelocityY;
+                labelsGroup.rotation.y += rotationVelocityY;
+                atmosphere.rotation.y += rotationVelocityY;
+
+                earth.rotation.x += rotationVelocityX;
+                clouds.rotation.x += rotationVelocityX;
+                labelsGroup.rotation.x += rotationVelocityX;
+                atmosphere.rotation.x += rotationVelocityX;
+
+                earth.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, earth.rotation.x));
+                clouds.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, clouds.rotation.x));
+                labelsGroup.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, labelsGroup.rotation.x));
+                atmosphere.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, atmosphere.rotation.x));
+
+                previousMousePosition = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', () => {
+            isDragging = false;
+            console.log('Touch drag ended');
+        });
+
+        // Tooltip for hover (shows country (capital) for countries, just state for states)
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const tooltip = document.getElementById('tooltip');
+
+        function onMouseMove(event) {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(labelsGroup.children);
+            if (intersects.length > 0) {
+                const sprite = intersects[0].object;
+                tooltip.style.display = 'block';
+                tooltip.style.left = `${event.clientX + 10}px`;
+                tooltip.style.top = `${event.clientY - 10}px`;
+                tooltip.textContent = sprite.userData.isState ? sprite.userData.country : `${sprite.userData.country} (${sprite.userData.name})`;
+            } else {
+                tooltip.style.display = 'none';
+            }
+        }
+
+        canvas.addEventListener('mousemove', onMouseMove);
+
+        canvas.addEventListener('touchmove', (event) => {
+            event.preventDefault();
+            if (event.touches.length === 1) {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = ((event.touches[0].clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((event.touches[0].clientY - rect.top) / rect.height) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(labelsGroup.children);
+                if (intersects.length > 0) {
+                    const sprite = intersects[0].object;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = `${event.touches[0].clientX + 10}px`;
+                    tooltip.style.top = `${event.touches[0].clientY - 10}px`;
+                    tooltip.textContent = sprite.userData.isState ? sprite.userData.country : `${sprite.userData.country} (${sprite.userData.name})`;
+                } else {
+                    tooltip.style.display = 'none';
+                }
+            }
+        }, { passive: false });
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            if (!isDragging) {
+                earth.rotation.y += rotationSpeed;
+                clouds.rotation.y += rotationSpeed * 1.1;
+                labelsGroup.rotation.y += rotationSpeed;
+                atmosphere.rotation.y += rotationSpeed * 0.95;
+
+                rotationVelocityX *= rotationDamping;
+                rotationVelocityY *= rotationDamping;
+
+                earth.rotation.y += rotationVelocityY;
+                earth.rotation.x += rotationVelocityX;
+                clouds.rotation.y += rotationVelocityY;
+                clouds.rotation.x += rotationVelocityX;
+                labelsGroup.rotation.y += rotationVelocityY;
+                labelsGroup.rotation.x += rotationVelocityX;
+                atmosphere.rotation.y += rotationVelocityY;
+                atmosphere.rotation.x += rotationVelocityX;
+
+                earth.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, earth.rotation.x));
+                clouds.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, clouds.rotation.x));
+                labelsGroup.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, labelsGroup.rotation.x));
+                atmosphere.rotation.x = Math.max(-maxPolarAngle, Math.min(maxPolarAngle, atmosphere.rotation.x));
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Responsive canvas
+        function resizeRenderer() {
+            const container = canvas.parentElement;
+            const size = Math.min(container.clientWidth, container.clientHeight, 1600);
+            renderer.setSize(size, size, false);
+            camera.aspect = 1;
+            camera.updateProjectionMatrix();
+        }
+
+        window.addEventListener('resize', resizeRenderer);
+        resizeRenderer();
+
+        // Verify
+        if (!renderer.domElement.isConnected) {
+            console.error('Renderer not connected.');
+        } else {
+            console.log('Globe rendering started');
+        }
+            const yearSpan = document.querySelector('.footer-bottom p');
+    if (yearSpan) {
+        const currentYear = new Date().getFullYear();
+        yearSpan.textContent = yearSpan.textContent.replace('2025', currentYear);
+    } 
+
+// Testimonial Slider
+const testimonials = document.querySelectorAll('.testimonial');
+const dots = document.querySelectorAll('.dot');
+let currentTestimonial = 0;
+let touchStartX = 0;
+let touchEndX = 0;
+
+function showTestimonial(index) {
+    testimonials.forEach((t, i) => {
+        t.classList.toggle('active', i === index);
+        t.style.opacity = i === index ? 1 : 0;
+    });
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    currentTestimonial = index;
+}
+
+function nextTestimonial() {
+    const next = (currentTestimonial + 1) % testimonials.length;
+    showTestimonial(next);
+}
+
+function prevTestimonial() {
+    const prev = (currentTestimonial - 1 + testimonials.length) % testimonials.length;
+    showTestimonial(prev);
+}
+
+// Dot navigation
+dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => showTestimonial(index));
+});
+
+// Touch swipe support
+const slider = document.querySelector('.testimonial-slider');
+if (slider) {
+    slider.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    slider.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const swipeDistance = touchEndX - touchStartX;
+        if (swipeDistance > 50) {
+            prevTestimonial(); // Swipe right
+        } else if (swipeDistance < -50) {
+            nextTestimonial(); // Swipe left
+        }
+    });
+} else {
+    console.error('Testimonial slider not found');
+}
+
+// Auto-advance testimonials
+let autoAdvance = setInterval(nextTestimonial, 5000);
+slider.addEventListener('touchstart', () => clearInterval(autoAdvance));
+slider.addEventListener('touchend', () => {
+    autoAdvance = setInterval(nextTestimonial, 5000);
+});
+
+// Hero Globe Resize
+function resizeRenderer() {
+    const canvas = renderer.domElement;
+    const container = canvas.parentElement;
+    const width = Math.min(container.clientWidth, 600);
+    const height = Math.min(container.clientHeight, 600);
+    renderer.setSize(width, height);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+}
+
+window.addEventListener('resize', resizeRenderer);
+resizeRenderer();
+
+
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9337995f5adb7da0',t:'MTc0NTE4MzExOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
